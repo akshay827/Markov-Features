@@ -1,2 +1,2 @@
 # Markov-Features
-Implementation of functions that comes in handy for extracting markov features from images in DCT and DWT domains.
+Implementation of functions that comes in handy for extracting markov features from images in DCT and DWT domains. These features can be useful in detecting splicing in digital images, and are originally desribed in the paper [Digital image splicing detection based on Markov features in DCT and DWT domain](https://www.sciencedirect.com/science/article/abs/pii/S0031320312002440?via%3Dihub) by He et al.
