@@ -16,11 +16,10 @@ def meyer_dwt(im, mode="dmey"):
         coeffs_list.append(coeffs[0])
         for i in range(3):
             coeffs_list.append(coeffs[1][i])
-    
+   
     #round and abs the coeffs
     for i in range(len(coeffs_list)):
-        coeffs_list[i] = round_and_abs(coeffs_list[i])
-        
+        coeffs_list[i] = round_and_abs(coeffs_list[i])     
     return coeffs_list
 
 def H_diff_array (a, diff):
@@ -70,6 +69,7 @@ def extract_pos_features(coeffs_list):
         pos_dwt_features.append(coeff_features)
     
     pos_dwt_features = np.array(pos_dwt_features)
+    return (np.concatenate(pos_dwt_features, axis = 0))
 
 def difference_like_array(coeffs_list):
     diff_like_array = []
@@ -78,11 +78,8 @@ def difference_like_array(coeffs_list):
         C1 = coeffs_list[i]
         C2 = coeffs_list[i - 4]
         C3 = coeffs_list[i - 8]
-        
-        
-        '''
-        Getting index out of bound error otherwise
-        '''
+           
+        #Getting index out of bound error otherwise
         C2_new = np.zeros((int(C1.shape[0] / 2), int(C1.shape[1] / 2)))
         C3_new = np.zeros((int(C2.shape[0] / 2), int(C2.shape[1] / 2)))
 
@@ -102,7 +99,6 @@ def difference_like_array(coeffs_list):
     return (np.concatenate(pos_dwt_features, axis = 0))
 
 def extract_scale_features(coeffs_list):
-    
     diff_like_array = difference_like_array(coeffs_list)
     scale_dwt_features = []
     for arr in diff_like_array:
@@ -113,14 +109,12 @@ def extract_scale_features(coeffs_list):
         arr_P1v = V_markov(arr, 4).flatten()
 
         arr_features = np.concatenate( (arr_P1h, arr_P1v), axis=0)
-
         scale_dwt_features.append(arr_features)
         
     scale_dwt_features = np.array(scale_dwt_features)    
     return np.concatenate(scale_dwt_features, axis = 0)
 
 #Dependency across orientations
-
 def cross_diff_array(coeffs_list):
     cross_differences = []
     for i in range(1, 10, 4):
@@ -131,7 +125,6 @@ def cross_diff_array(coeffs_list):
         cross_differences.append(HV_diff)
         cross_differences.append(VD_diff)
         cross_differences.append(DH_diff)
-
     return np.array(cross_differences)
 
 def extract_orient_features(coeffs_list):
@@ -140,7 +133,6 @@ def extract_orient_features(coeffs_list):
 
     orient_dwt_features = []
     for diff in cross_differences:
-
         diff = threshold_array(diff, 4)
 
         #transition probability matrices:
@@ -148,7 +140,6 @@ def extract_orient_features(coeffs_list):
         diff_P1v = V_markov(diff, 4).flatten()
 
         diff_features = np.concatenate( (diff_P1h, diff_P1v), axis=0)
-
         orient_dwt_features.append(diff_features)
         
     orient_dwt_features = np.array(orient_dwt_features)
@@ -174,7 +165,6 @@ def extract_DWT_features(x):
         
         features = np.concatenate( (pos_dwt_features, scale_dwt_features, orient_dwt_features), axis=0)
         dwt_features.append(features)
-    
     return np.array(dwt_features)
 
 def extract_DCT_features(x):
@@ -190,8 +180,6 @@ def extract_DCT_features(x):
             for j in r_[:imsize[1]:8]:
                 dct[i:(i+8),j:(j+8)] = dct2( im[i:(i+8),j:(j+8)] )
         dct = round_and_abs (dct)
-        
-        
         F = dct
         Fh = H_diff_array(F, -1)
         Fv = V_diff_array(F, -1)
